@@ -1,9 +1,9 @@
-defmodule KherpiTesting.MixProject do
+defmodule KherpiLibcluster.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kherpi_testing,
+      app: :kherpi_libcluster,
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule KherpiTesting.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {KherpiTesting.Application, []}
+      mod: {KherpiLibcluster.Application, []}
     ]
   end
 

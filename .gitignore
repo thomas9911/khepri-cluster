@@ -20,7 +20,13 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-kherpi_testing-*.tar
+kherpi_libcluster-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+
+# Folder that is generated during tests
+khepri#nonode@nohost
+
+nohup.out

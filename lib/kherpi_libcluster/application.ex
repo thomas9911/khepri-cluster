@@ -1,4 +1,4 @@
-defmodule KherpiTesting.Application do
+defmodule KherpiLibcluster.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -24,12 +24,12 @@ defmodule KherpiTesting.Application do
     ]
 
     children = [
-      {Cluster.Supervisor, [topologies, [name: KherpiTesting.ClusterSupervisor]]}
+      {Cluster.Supervisor, [topologies, [name: KherpiLibcluster.ClusterSupervisor]]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: KherpiTesting.Supervisor]
+    opts = [strategy: :one_for_one, name: KherpiLibcluster.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

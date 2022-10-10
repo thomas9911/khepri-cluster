@@ -1,6 +1,6 @@
-defmodule KherpiTesting do
+defmodule KherpiLibcluster do
   @moduledoc """
-  Documentation for `KherpiTesting`.
+  Documentation for `KherpiLibcluster`.
   """
 
   defdelegate get(x), to: :khepri

@@ -7,6 +7,7 @@ defmodule KherpiStrategy do
   alias Cluster.Strategy.State
 
   @default_polling_interval 5_000
+  @default_store :khepri
 
   # check: https://github.com/bitwalker/libcluster/blob/main/lib/strategy/kubernetes_dns_srv.ex
 
@@ -52,7 +53,7 @@ defmodule KherpiStrategy do
 
   def start_link([%{config: config} = state] = args) do
     :khepri.start()
-    Logger.error("start")
+    Logger.info("start khepri")
 
     strategy = Keyword.fetch!(config, :strategy)
     config = Keyword.get(config, :args, [])
@@ -69,12 +70,9 @@ defmodule KherpiStrategy do
 
   @impl true
   def init([state]) do
-    # Process.send_after(
-    #   self(),
-    #   :load,
-    #   5000
-    # )
+    Process.flag(:trap_exit, true)
 
+    # forces timeout
     {:ok, state, 0}
   end
 
@@ -88,9 +86,16 @@ defmodule KherpiStrategy do
   end
 
   defp load(state) do
-    Logger.error("loading")
+    me = node()
 
-    # add connection and disconnection here
+    if :khepri_cluster.nodes(@default_store) -- [me] == [] and Node.list() != [] do
+      # if we join to one we join to all
+      Node.list()
+      |> List.first()
+      |> :khepri_cluster.join()
+    else
+      :ok
+    end
 
     Process.send_after(
       self(),
@@ -103,5 +108,24 @@ defmodule KherpiStrategy do
 
   defp polling_interval(%State{config: config}) do
     Keyword.get(config, :polling_interval, @default_polling_interval)
+  end
+
+  def terminate(reason, _state) do
+    cleanup()
+
+    reason
+  end
+
+  def handle_info({:EXIT, _from, reason}, state) do
+    cleanup()
+
+    {:stop, reason, state}
+  end
+
+  defp cleanup do
+    # disconnect from cluster
+    :khepri_cluster.reset()
+
+    Logger.info("shutting down")
   end
 end
